@@ -1,11 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# ## Importing Dataframe
-
-# In[69]:
-
-
 import numpy as np
 import pandas as pd
 from sklearn.impute import KNNImputer
@@ -14,62 +6,21 @@ df = pd.read_csv('training_data.csv')
 target = pd.read_csv('training_data_targets.csv',names = ['label'])
 
 
-# In[70]:
-
-
-print(df)
-
-
-# In[71]:
-
-
 df_encoded = pd.get_dummies(df, columns=['hypertensive', 'atrialfibrillation', 'CHD with no MI', 'diabetes', 'deficiencyanemias', 'depression', 'Hyperlipemia', 'Renal failure', 'COPD'], prefix=('hypertensive', 'atrialfibrillation', 'CHD with no MI', 'diabetes', 'deficiencyanemias', 'depression', 'Hyperlipemia', 'Renal failure', 'COPD'))                          
 print(df_encoded)
 
-
-# In[ ]:
-
-
-
-
-
-# ## Extracting Pure Dataset
-
-# In[72]:
-
-
 df_attach = df_encoded.copy()
 df_attach['Y'] = target['label']
-
-
-# In[73]:
-
 
 df_attach_pure = df_attach.dropna()
 target_pure = df_attach_pure['Y']
 df_pure = df_attach_pure.drop('Y',axis = 1)
 
-
-# In[74]:
-
-
 row = df.index
 clm= df.columns
-print(len(clm))
-print(len(row))
-
-
-# In[75]:
-
 
 h = df.isnull().sum(axis=0)
 print(h)
-
-
-# ## Extracting dataset dropping columns where more than 20% values are missing
-
-# In[76]:
-
 
 df_plain = df_encoded.copy()
 dropcol= []
@@ -77,16 +28,8 @@ for i in range(len(h)):
     if h[i]>=211:
         dropcol.append(df_plain.columns[i])
 
-
-# In[77]:
-
-
 df_twenty= df_plain.drop(dropcol,axis = 1)
 df_twenty
-
-
-# In[78]:
-
 
 dropcol
 
@@ -95,16 +38,11 @@ dropcol
 
 # Mean Value Imputation where no column is dropped
 
-# In[79]:
-
 
 df_nodrop_mean = df_encoded.copy()
 for column in df_nodrop_mean.columns:
     mean_nodrop = df_nodrop_mean[column].mean()
     df_nodrop_mean[column].fillna(mean_nodrop, inplace = True)
-
-
-# In[80]:
 
 
 k = df_nodrop_mean.isnull().sum(axis=0)
@@ -113,32 +51,15 @@ k
 
 # Mean Value Imputation where column with more than 20% value missing dropped
 
-# In[81]:
-
 
 df_twenty_mean = df_twenty
 for column in df_twenty_mean.columns:
     mean_twenty = df_twenty_mean[column].mean()
     df_twenty_mean[column].fillna(mean_twenty, inplace = True)
 
-
-# In[82]:
-
-
 h = df_twenty_mean.isnull().sum(axis=0)
-h
-
-
-# In[83]:
-
-
-df_twenty_mean
-
 
 # Median Value Imputation where no column is dropped
-
-# In[84]:
-
 
 df_nodrop_median= df_encoded.copy()
 for column in df_nodrop_median.columns:
@@ -148,9 +69,6 @@ for column in df_nodrop_median.columns:
 
 # Median Value Imputation where column with more than 20% value missing dropped
 
-# In[85]:
-
-
 df_twenty_median= df_twenty.copy()
 for column in df_twenty_median.columns:
     median_twenty = df_twenty_median[column].median()
@@ -158,9 +76,6 @@ for column in df_twenty_median.columns:
 
 
 # (Mean + Standard Deviation) Value Imputation where no column is dropped
-
-# In[86]:
-
 
 df_nodrop_mpstd= df_encoded.copy()
 for column in df_nodrop_mpstd.columns:
@@ -170,9 +85,7 @@ for column in df_nodrop_mpstd.columns:
     df_nodrop_mpstd[column].fillna(f, inplace=True)
 
 
-# (Mean + Standard Deviation) Value Imputation where column with more than 20% value missing dropped
-
-# In[87]:
+# (Mean + Standard Deviation) Value Imputation where column with more than 20% value missing dropped 
 
 
 df_twenty_mpstd= df_twenty.copy()
@@ -185,8 +98,6 @@ for column in df_twenty_mpstd.columns:
 
 # (Mean - Standard Deviation) Value Imputation where no column is dropped
 
-# In[88]:
-
 
 df_nodrop_mmstd= df_encoded.copy()
 for column in df_nodrop_mmstd.columns:
@@ -197,8 +108,6 @@ for column in df_nodrop_mmstd.columns:
 
 # (Mean - Standard Deviation) Value Imputation where column with more than 20% value missing dropped
 
-# In[89]:
-
 
 df_twenty_mmstd= df_twenty.copy()
 for column in df_twenty_mmstd.columns:
@@ -208,8 +117,6 @@ for column in df_twenty_mmstd.columns:
 
 
 # KNN Imputation where no column is dropped
-
-# In[90]:
 
 
 from sklearn.impute import KNNImputer
@@ -223,9 +130,6 @@ for column in df_nodrop_knn.columns:
 
 # KNN Imputation where column with more than 20% value missing dropped 
 
-# In[91]:
-
-
 df_twenty_knn = df_twenty.copy()
 for column in df_twenty_knn.columns:
     knn_twenty_imputer = KNNImputer(n_neighbors=3)
@@ -235,9 +139,6 @@ for column in df_twenty_knn.columns:
 
 
 # ## Importing Necessary Libraries
-
-# In[92]:
-
 
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import train_test_split, GridSearchCV
@@ -258,16 +159,10 @@ from sklearn.metrics import confusion_matrix
 
 # Running the model after Mean Imputation without dropping any column
 
-# In[95]:
-
-
 X = df_nodrop_mean
 Y = target
 
 X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=42, stratify = Y)
-
-
-# In[96]:
 
 
 # Create a pipeline dictionary with models and their hyperparameters
@@ -409,16 +304,10 @@ print(classification_report(y_test, best_model.predict(X_test)))
 
 # Running the Model after Mean Value Imputation where column with more than 20% value missing dropped
 
-# In[97]:
-
-
 X = df_twenty_mean
 Y = target
 
 X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=17, stratify = Y) # stratify.
-
-
-# In[98]:
 
 
 # Create a pipeline dictionary with models and their hyperparameters
@@ -561,17 +450,10 @@ print(classification_report(y_test, best_model.predict(X_test)))
 
 # Running the model after Median Imputation without dropping any column
 
-# In[99]:
-
-
 X = df_nodrop_median
 Y = target
 
 X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=17, stratify = Y) # stratify.
-
-
-# In[100]:
-
 
 # Create a pipeline dictionary with models and their hyperparameters
 pipeline_dict = {
@@ -711,8 +593,6 @@ print(classification_report(y_test, best_model.predict(X_test)))
 
 
 # Running the model after after Median Imputation by dropping columns where more than 20% values are missing
-
-# In[101]:
 
 
 X = df_twenty_median
@@ -1619,17 +1499,11 @@ print(classification_report(y_test, best_model.predict(X_test)))
 
 # Running the model after KNN Imputation by dropping columns where more than 20% values are missing 
 
-# In[113]:
-
 
 X = df_twenty_mmstd
 Y = target
 
 X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=42, stratify = Y) 
-
-
-# In[114]:
-
 
 # Create a pipeline dictionary with models and their hyperparameters
 pipeline_dict = {
@@ -1770,31 +1644,16 @@ print(classification_report(y_test, best_model.predict(X_test)))
 
 # ## Running the Model on the training data
 
-# In[115]:
-
-
 df_test = pd.read_csv('test_data (1).csv')
 df_test_encoded = pd.get_dummies(df, columns=['hypertensive', 'atrialfibrillation', 'CHD with no MI', 'diabetes', 'deficiencyanemias', 'depression', 'Hyperlipemia', 'Renal failure', 'COPD'], prefix=('hypertensive', 'atrialfibrillation', 'CHD with no MI', 'diabetes', 'deficiencyanemias', 'depression', 'Hyperlipemia', 'Renal failure', 'COPD'))                          
 print(df_encoded)
-
-
-# In[116]:
-
 
 for column in df_test_encoded.columns:
     median = df_test_encoded[column].median()
     df_test_encoded[column].fillna(median, inplace = True)
 
-
-# In[117]:
-
-
 X_train_final = df_nodrop_median.copy()
 y_train = target.copy()
-
-
-# In[118]:
-
 
 adaboost_model = AdaBoostClassifier(
     algorithm='SAMME',
@@ -1803,21 +1662,11 @@ adaboost_model = AdaBoostClassifier(
     random_state=42
 )
 
-
-# In[119]:
-
-
 adaboost_model.fit(X_train_final, y_train)
-
-
-# In[120]:
 
 
 y_pred = adaboost_model.predict(df_test_encoded)
 y_pred
-
-
-# In[121]:
 
 
 feature_importances = adaboost_model.feature_importances_
@@ -1825,21 +1674,6 @@ feature_importances = adaboost_model.feature_importances_
 for feature, importance in zip(X_train_final.columns, feature_importances):
     print(f"{feature}: {importance}")
 
-
-# In[122]:
-
-
 save_file = np.savetxt("Rohan_Mehra_21224_ML_Labels_final.txt", y_pred, delimiter="\n", fmt="%.0f")
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
 
 
