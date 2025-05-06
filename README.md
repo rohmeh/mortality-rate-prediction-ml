@@ -27,8 +27,6 @@ The dataset includes relevant patient features like age, blood pressure, creatin
    python "ML Project Final.py"
    ```
 
-> ⚠️ Note: Ensure the dataset file (if external) is present in the correct directory or update the path accordingly in the code.
-
 ## Requirements
 
 - Python 3.x
